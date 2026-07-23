@@ -5,15 +5,19 @@
 
 int main(int argc, char **argv)
 {
-    if (argc != 2)
+    if (argc > 2)
     {
-        std::cerr << "Usage: Beyondmimic_Deploy <network-interface>\n";
+        std::cerr << "Usage: Beyondmimic_Deploy [network-interface]\n"
+                  << "  no argument: Unitree MuJoCo simulation (domain 1, lo)\n"
+                  << "  interface:   real robot (domain 0, interface)\n";
         return 1;
     }
 
     try
     {
-        deploy_real::UnitreeController controller(argv[1]);
+        const bool simulation = argc == 1;
+        deploy_real::UnitreeController controller(
+            simulation ? 1 : 0, simulation ? "lo" : argv[1]);
         controller.Run();
     }
     catch (const std::exception &error)

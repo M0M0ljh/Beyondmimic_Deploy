@@ -25,7 +25,7 @@ namespace deploy_real
 class UnitreeController
 {
 public:
-    explicit UnitreeController(const std::string &network_interface);
+    UnitreeController(int dds_domain_id, const std::string &network_interface);
     ~UnitreeController();
 
     void Run();

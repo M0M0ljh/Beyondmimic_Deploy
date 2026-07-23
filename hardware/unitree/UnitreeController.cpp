@@ -52,12 +52,12 @@ float SafeAxis(float value)
 
 } // namespace
 
-UnitreeController::UnitreeController(const std::string &network_interface)
+UnitreeController::UnitreeController(int dds_domain_id, const std::string &network_interface)
     : loco_config_(LocoConfig::Load(ProjectPath("configs/loco_mode/g1.yaml"))),
       redred_config_(RedRedConfig::Load(ProjectPath("configs/redred/g1.yaml"))),
       state_machine_(CreateDefaultStateMachine(loco_config_, redred_config_))
 {
-    unitree::robot::ChannelFactory::Instance()->Init(0, network_interface);
+    unitree::robot::ChannelFactory::Instance()->Init(dds_domain_id, network_interface);
 
     lowcmd_publisher_.reset(
         new unitree::robot::ChannelPublisher<unitree_hg::msg::dds_::LowCmd_>(

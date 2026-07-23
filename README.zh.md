@@ -13,8 +13,8 @@ ONNX 策略，并由有限状态机管理行走和参考动作跟踪。
   `RedRed`、`Damping` 明确管理策略和状态切换。
 - **双 ONNX 策略**：Loco 使用摇杆速度指令（`96` 维观测 → `29` 维动作）；
   RedRed 执行参考动作跟踪（`154` 维观测 → `29` 维动作）。
-- **Unitree 原厂遥控器**：直接读取 `LowState.wireless_remote`，不依赖 USB 或
-  Xbox 手柄适配器。
+- **Unitree 原厂遥控器**：实机直接读取 `LowState.wireless_remote`；MuJoCo 中可由
+  Unitree 模拟器使用 Xbox 或 Switch 手柄模拟同一份遥控器数据包。
 - **ARM64 构建适配**：CMake 自动选择 x64 或 aarch64 ONNX Runtime；G1 PC2 的
   原生目标为 aarch64。
 - **运行时检查**：LowState CRC 错误、状态超时、非有限数、活动状态翻转和 ONNX
@@ -77,6 +77,43 @@ cmake --build build -j
 策略二进制默认不提交。运行前请将已验证的模型放到上述路径；模型来源和张量契约记录见
 [model/README.md](model/README.md)。
 
+## 部署到 MuJoCo 仿真
+
+本控制器在仿真和实机中都使用 Unitree SDK2 的 `LowState`／`LowCmd` DDS 通路，
+可配合 [unitreerobotics/unitree_mujoco](https://github.com/unitreerobotics/unitree_mujoco)
+中的 C++ 模拟器使用。
+
+1. 按 Unitree MuJoCo 官方说明安装并编译模拟器。
+2. 在 `unitree_mujoco/simulate/config.yaml` 中选择 G1 场景，并与控制器的仿真 DDS
+   设置保持一致：
+
+   ```yaml
+   robot: "g1"
+   robot_scene: "scene_29dof.xml"
+   domain_id: 1
+   interface: "lo"
+   use_joystick: 1
+   joystick_type: "xbox"
+   enable_elastic_band: 1
+   ```
+
+   `unitree_mujoco` 中的手柄只负责模拟 Unitree 无线遥控器数据包；控制器仍从
+   `LowState.wireless_remote` 读取输入。
+3. 先启动模拟器：
+
+   ```bash
+   cd unitree_mujoco/simulate/build
+   ./unitree_mujoco
+   ```
+
+4. 在另一终端不带网卡参数启动本控制器：
+
+   ```bash
+   ./build/Beyondmimic_Deploy
+   ```
+
+   不带参数时会使用 DDS 域 `1` 和回环网卡 `lo`。
+
 ## 实机运行
 
 1. 让 G1 进入 Unitree 低层／调试就绪模式，并将机器人吊起。
@@ -92,7 +129,8 @@ cmake --build build -j
 
 ## 遥控器与键盘操作
 
-控制器直接从 `LowState.wireless_remote` 读取 Unitree 原厂遥控器。键盘仅用于开发调试。
+实机上，控制器直接从 `LowState.wireless_remote` 读取 Unitree 原厂遥控器；MuJoCo
+下可由 `unitree_mujoco` 使用手柄模拟该数据包。键盘仅用于开发调试。
 
 | 操作 | Unitree 原厂遥控器 | 键盘 |
 | --- | --- | --- |

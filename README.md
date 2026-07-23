@@ -17,8 +17,9 @@ robot through a finite-state machine.
 - **Two ONNX policies** — joystick-commanded Loco (`96` observations → `29`
   actions) and RedRed reference-motion tracking (`154` observations → `29`
   actions).
-- **Unitree wireless remote** — commands come directly from
-  `LowState.wireless_remote`; no USB/Xbox gamepad adapter is required.
+- **Unitree wireless remote** — on the physical robot, commands come directly
+  from `LowState.wireless_remote`.  In MuJoCo, Unitree's simulator can emulate
+  the same packet from an Xbox or Switch gamepad.
 - **ARM64-ready build** — CMake selects the matching x64 or aarch64 ONNX
   Runtime package; aarch64 is the native target for G1 PC2.
 - **Runtime checks** — invalid LowState CRC, stale state, non-finite values,
@@ -86,6 +87,43 @@ The policy binaries are intentionally ignored.  Place locally validated models
 at the paths above before running; see [model/README.md](model/README.md) for
 the expected provenance and tensor-contract record.
 
+## Deploy on MuJoCo Simulation
+
+This controller uses the same Unitree SDK2 DDS `LowState` and `LowCmd` path in
+simulation as on the real robot.  It works with the C++ simulator in
+[unitreerobotics/unitree_mujoco](https://github.com/unitreerobotics/unitree_mujoco).
+
+1. Install and build Unitree MuJoCo following its official instructions.
+2. In `unitree_mujoco/simulate/config.yaml`, select the G1 scene and match the
+   controller's simulation DDS settings:
+
+   ```yaml
+   robot: "g1"
+   robot_scene: "scene_29dof.xml"
+   domain_id: 1
+   interface: "lo"
+   use_joystick: 1
+   joystick_type: "xbox"
+   enable_elastic_band: 1
+   ```
+
+   `unitree_mujoco` uses the gamepad only to emulate Unitree's wireless remote
+   packet.  The controller still consumes `LowState.wireless_remote`.
+3. Start the simulator first:
+
+   ```bash
+   cd unitree_mujoco/simulate/build
+   ./unitree_mujoco
+   ```
+
+4. In another terminal, start this controller with no interface argument:
+
+   ```bash
+   ./build/Beyondmimic_Deploy
+   ```
+
+   No argument selects DDS domain `1` and the loopback interface `lo`.
+
 ## Running on the Real Robot
 
 1. Put the G1 in Unitree low-level/debug-ready mode and suspend the robot.
@@ -101,9 +139,10 @@ the expected provenance and tensor-contract record.
 
 ## Controls
 
-The controller accepts Unitree's original wireless remote from
-`LowState.wireless_remote`.  Keyboard commands are provided for development
-only.
+On the physical robot, the controller accepts Unitree's original wireless
+remote from `LowState.wireless_remote`.  Under MuJoCo, `unitree_mujoco` can
+emulate that packet with a gamepad.  Keyboard commands are provided for
+development only.
 
 | Action | Unitree wireless remote | Keyboard |
 | --- | --- | --- |
