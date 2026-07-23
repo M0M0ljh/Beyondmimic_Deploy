@@ -127,5 +127,3 @@ thirdparty/          本地依赖说明（不提交运行时二进制）
 - **BeyondMimic**：动作跟踪的训练方法参考了 [HybridRobotics/whole_body_tracking](https://github.com/HybridRobotics/whole_body_tracking) 与 BeyondMimic 论文；其上游训练代码采用 MIT 许可证。本部署仓库未包含该训练代码；若将来引入，必须同时保留其版权声明和 MIT 许可证。
 
 ONNX 策略和动作资产属于独立交付物。在其来源、训练数据条款和再分发权利记录到 [model/README.md](model/README.md) 前，默认不纳入公开发布。
-
-本仓库目前尚未选择项目级许可证。在版权持有人于根目录添加 `LICENSE` 前，仓库中自主贡献代码的全部权利均予保留。正式公开发布时，必须保留 Unitree 的 BSD 声明，并先处理 RoboMimic Deploy 内容的来源与授权问题，再为自主代码选择许可证。

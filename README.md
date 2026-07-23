@@ -178,9 +178,3 @@ Detailed notices are collected in [NOTICE.md](NOTICE.md).
 The ONNX policies and motion assets are separate deliverables.  They remain
 excluded until their provenance, training-data terms, and redistribution rights
 are documented in [model/README.md](model/README.md).
-
-No project-wide license has been selected for this repository yet.  Until a
-top-level `LICENSE` is added by the copyright holder, all rights in this
-repository's original contributions are reserved.  A public release must retain
-the Unitree BSD notice and resolve the RoboMimic Deploy provenance before
-choosing a license for the original code.
