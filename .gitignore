@@ -1,0 +1,40 @@
+# CMake and test output
+/build/
+/build-*/
+/cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+Testing/
+install_manifest.txt
+
+# Local runtime state and editor files
+/tmp/
+.vscode/
+.idea/
+.marscode/
+*.swp
+*~
+
+# Compiled artifacts
+*.o
+*.a
+*.so
+*.so.*
+*.dylib
+*.exe
+
+# ONNX Runtime is an architecture-specific third-party download.  See
+# thirdparty/README.md; do not commit either the x64 or aarch64 distribution.
+/thirdparty/onnxruntime-*/
+
+# Commit policy models only after verifying their redistribution rights.
+# model/README.md records the expected provenance and download procedure.
+/model/**/*.onnx
+/model/**/*.npz
+/legacy/*.onnx
+/legacy/*.npz
+
+# Source video used to make the compact README demonstration GIF.  Keep the
+# derived GIF in assets/ under version control, but do not publish the raw file.
+/beyondmimic.mp4
